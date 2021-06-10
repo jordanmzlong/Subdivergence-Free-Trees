@@ -1,8 +1,9 @@
-from itertools import chain, combinations, product
 import copy
+from collections import Counter, defaultdict
 from functools import reduce
+from itertools import chain, combinations, product
+
 from multiset import Multiset
-from collections import defaultdict, Counter
 
 # used to generate new colour labels
 leaf_counter = 1
@@ -179,158 +180,18 @@ def subfree_wrapper(t1,t2):
     return subfree(t1,t2)
 
 def main():
-    # testing lopsided double line family formula
-    k = 1
-    n = 2
-    while True:
-        k = 1
-        while k < n:
-            l = n-k
-            tbasic1 = Node([],[1])
-            tbasic2 = Node([],[1])
-            for i in range(1,k):
-                tbasic1 = Node([tbasic1],[1])
-            for i in range(1,l):
-                tbasic2 = Node([tbasic2],[1])
-            tdouble = Node([tbasic1,tbasic2],[])
-            print(k, l, tdouble)
-            print(subfree(tdouble,tdouble))
-            k += 1
-        n += 1
-
-    """
-    # testing double line family
-    k = 1
-    tbasic = Node([],[1])
-    while True:
-        tdouble = Node([tbasic,tbasic],[])
-        print(k, tdouble)
-        print(subfree(tdouble,tdouble))
-        tbasic = Node([tbasic],[1])
-        k += 1
-    """
-    """
-    # testing remove_two_valent
-    print(remove_two_valent(Node([],[1])))
-    print(remove_two_valent(Node([Node([],[1])],[])))
-    print(remove_two_valent(Node([Node([Node([],[1])],[])],[])))
-    print(remove_two_valent(Node([Node([],[1]),Node([],[1])],[])))
-    print(remove_two_valent(Node([Node([Node([],[1])],[])],[1])))
-    """
-    """
-    root = Node([Node([],[1]), Node([],[1])],[1])
-    tree = Tree(root)
-    print(root)
-    assert(count_sibling_subsets(tree.root) == 3)
-    r1 = Node([Node([Node([Node([],[1])],[2])],[3])],[4])
-    r2 = Node([Node([Node([Node([],[1])],[2])],[3]), Node([],[5])],[4])
-    assert(count_sibling_subsets(r1) == 3)
-    assert(count_sibling_subsets(r2) == 7)
-    print(c(root))
-    print(c(r1))
-    print(c(r2))
-    assert(Multiset([1,2,3,4,5]) == c(r2))
-    for i in Multiset([1,1,1,2,3]).items():
-        print(i)
-    assert(colour_preserving(Multiset([1,1,1,2,3])) == 6)
-    assert(fact(0) == 1)
-    assert(fact(1) == 1)
-    assert(fact(4) == 24)
-    basic_root = Node([],[1])
-    #print(deconstruct(basic_root))
-    #print(deconstruct(root))
-    #print(multiset_to_leaf)
-    #print(subfree(root, root))
-    """ 
-    """
-    # deconstruct tests
+    # some basic examples:
     t1 = Node([],[1])
-    assert(subfree(t1,t1) == 1)
-    assert(subs(t1,t1) == 0)
+    assert(subfree_wrapper(t1,t1) == 1)
     t2 = Node([t1],[1])
-    assert(subfree(t2,t2) == 1)
-    assert(subs(t2,t2) == 1)
+    assert(subfree_wrapper(t2,t2) == 1)
     t3 = Node([t2],[1])
-    assert(subfree(t3,t3) == 3)
+    assert(subfree_wrapper(t3,t3) == 3)
     t4 = Node([t3],[1])
-    assert(subfree(t4,t4) == 13)
+    assert(subfree_wrapper(t4,t4) == 13)
     t5 = Node([t4],[1])
-    assert(subfree(t5,t5) == 71)
-    tn = t5
-    n = 5
-    # got up to 14 without it getting too slow
-    """
-    """
-    while True:
-        n += 1
-        print("round number",n)
-        tn = Node([tn],[1])
-        print(subfree(tn,tn))
-    """
-    """
-    d0 = Node([],[1,1])
-    #assert(subfree(d0,d0) == 2)
-    d1 = Node([d0,d0],[])
-    #print(d1)
-    #print(deconstruct(d1))
-    #print(subfree(d1,d1))
-    #print(subs(d1,d1))
-    assert(subfree(d1,d1) == 16)
-    d2 = Node([d0],[1])
-    d3 = Node([d2,d2],[])
-    assert(subfree(d3,d3) == 512)
-    d4 = Node([d2],[1])
-    d5 = Node([d4,d4],[])
-    assert(subfree(d5,d5) == 32576)
-    # testing time... to test:
-    # single tree family (DONE)
-    # double tree family (DONE)
-    # clair family
-    # full family
-    # perhaps a family with more children?
-    d6 = Node([d0,d1],[])
-    assert(subfree(d6,d6) == 384)
-    d7 = Node([d0,d2],[])
-    assert(subfree(d7,d7) == 80)
-    d8 = Node([d0,d4],[])
-    assert(subfree(d8,d8) == 528)
-    d9 = Node([d2,d4],[])
-    assert(subfree(d9,d9) == 3840)
-    d10 = Node([d1,d1],[])
-    assert(subfree(d10,d10) == 22528)
+    assert(subfree_wrapper(t5,t5) == 71)
     
-    d11 = Node([t1,t1], [])
-    assert(subfree(d11,d11) == 0)
-    d12 = Node([t2,t2],[])
-    print(subfree(d12, d12))
-    """
-    """
-    # testing Clair's family by creating t_{k,i} for every possible combination
-    # Note the formula in the paper only applies when 1 < i < k
-    k = 1
-    i = 1
-    while True:
-        i = 1
-        while i <= k:
-            if i == 1:
-                tsofar = Node([Node([],[1])],[])
-            else:
-                tsofar = Node([],[1])
-            kcounter = k-1
-            icounter = i-1
-            while kcounter > 0:
-                if icounter == 1:
-                    tsofar = Node([tsofar, Node([],[1])],[])
-                else:
-                    tsofar = Node([tsofar],[1])
-                icounter -= 1
-                kcounter -= 1
-            print(k,i,tsofar)
-            print(subfree_wrapper(tsofar,tsofar))
-            i += 1
-        k += 1
-    """
-
 
 if __name__ == "__main__":
     main()
